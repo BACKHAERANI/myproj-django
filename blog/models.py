@@ -9,8 +9,8 @@ class TimestampedModel(models.Model):
         abstract = True
 
 
-class Blog(models.Model):
-    title = models.CharField(max_length=100)
+class Post(models.Model):
+    title = models.CharField(max_length=100, db_index=True)
     content = models.TextField()
 
 

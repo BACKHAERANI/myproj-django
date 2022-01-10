@@ -1,8 +1,8 @@
 from django.contrib import admin
-from blog.models import Blog
+from blog.models import Post
 
 
-@admin.register(Blog)
-class Blog(admin.ModelAdmin):
+@admin.register(Post)
+class Post(admin.ModelAdmin):
     pass
 
