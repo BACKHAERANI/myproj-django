@@ -1,6 +1,7 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView
 from rest_framework import viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from news.forms import ArticleForm
 from news.models import Article
 from news.serializers import ArticleSerializer
@@ -10,12 +11,16 @@ from rest_framework.generics import ListAPIView
 
 article_list = ListView.as_view(model=Article)
 
-article_new = CreateView.as_view(model=Article, form_class=ArticleForm, success_url=reverse_lazy("news:article_list"))
+article_new = CreateView.as_view(
+    model=Article, form_class=ArticleForm, success_url=reverse_lazy("news:article_list")
+)
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]  DRF디폴트설정
     # 보여 주는 데이터의 범위를 결정하는 것은 serializer이다.
     #
     # def get_serializer_class(self):
