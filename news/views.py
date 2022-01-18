@@ -19,36 +19,15 @@ article_new = CreateView.as_view(
 class ArticleViewSet(viewsets.ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializer
-    permission_classes = [IsAuthenticated]
-    # permission_classes = [AllowAny]  DRF디폴트설정
-    # 보여 주는 데이터의 범위를 결정하는 것은 serializer이다.
-    #
-    # def get_serializer_class(self):
-    #     return ArticleSerializer
-    #
-    # def get_queryset(self):
-    #     qs = super().get_queryset()
-    #     query = self.request.guery_params.get("query", "")
-    #     if query:
-    #         qs = qs.filter(title_icontains=query)
-    #     year = self.request.guery_params.get("year", "")
-    #     if year:
-    #         qs = qs.filter(created_at__year=year)
-    #     return qs
+    # permission_classes = [IsAuthenticated]
 
+    def get_permissions(self):
+        # if self.request.method in ("POST", "PUT", "PATCH", "DELETE"):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return [IsAuthenticated()]
 
-# article_list = ListAPIView.as_view(
-#     queryset=Article.objects.all(),
-#     serializer_class=ArticleSerializer,
-# )
-# def article_list(request):
-#     qs = Article.objects.all()
-#     serializer = ArticleSerializer(qs, many=True)
-#     data = serializer.data
-#     # [{"id": article.id,
-#     #          "title": article.title,
-#     #          "content": article.content,
-#     #          "photo": request.build_absolute_uri(article.photo.url) if article.photo else None,}
-#     #         for article in qs]
-#     json_string = json.dumps(data)
-#     return HttpResponse(json_string)
+    def perform_create(self, serializer):
+        # serializer.save는 commit=False를 지원하지 않음
+        # 대신 키워드 인자를 통한 속성 지정을 지원함
+        serializer.save(author=self.request.user)
